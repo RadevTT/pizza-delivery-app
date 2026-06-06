@@ -21,6 +21,10 @@ import java.util.UUID;
         @Column(nullable = false)
         private String password;
 
+    public User() {
+
+    }
+
     public User(UUID id, String username, String email, String password) {
         this.id = id;
         this.username = username;
