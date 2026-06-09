@@ -1,6 +1,7 @@
 package bg.softuni.pizza_delivery_application.controller;
 
 import bg.softuni.pizza_delivery_application.model.dto.PizzaAddDTO;
+import bg.softuni.pizza_delivery_application.model.dto.PizzaEditDTO;
 import bg.softuni.pizza_delivery_application.service.PizzaService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -58,6 +59,30 @@ public class PizzaController {
     public String deletePizza(@PathVariable UUID id) {
 
         pizzaService.deletePizza(id);
+
+        return "redirect:/pizzas";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPizza(@PathVariable UUID id, Model model) {
+
+        if (!model.containsAttribute("pizzaEditDTO")) {
+            model.addAttribute("pizzaEditDTO", pizzaService.getPizzaForEdit(id));
+        }
+
+        return "pizza-edit";
+    }
+
+    @PostMapping("/edit")
+    public String editPizza(
+            @Valid PizzaEditDTO pizzaEditDTO,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "pizza-edit";
+        }
+
+        pizzaService.editPizza(pizzaEditDTO);
 
         return "redirect:/pizzas";
     }
