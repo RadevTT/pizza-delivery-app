@@ -23,10 +23,6 @@ public class AuthController {
         model.addAttribute("user", new UserRegisterDTO());
         return "register";
     }
-    @GetMapping("/home")
-    public String home() {
-        return "home";
-    }
     @GetMapping("/login")
     public String login() {
         return "login";
