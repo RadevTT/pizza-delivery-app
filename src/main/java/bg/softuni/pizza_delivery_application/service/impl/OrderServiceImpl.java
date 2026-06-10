@@ -1,6 +1,7 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
 import bg.softuni.pizza_delivery_application.model.dto.OrderCreateDTO;
+import bg.softuni.pizza_delivery_application.model.dto.OrderDetailsDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Order;
 import bg.softuni.pizza_delivery_application.model.entity.OrderItem;
 import bg.softuni.pizza_delivery_application.model.entity.Pizza;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -65,5 +67,49 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return orderRepository.findAllByUserOrderByCreatedOnDesc(user);
+    }
+
+    @Override
+    public List<OrderDetailsDTO> getOrderDetails(UUID orderId) {
+
+        return orderItemRepository.findAllByOrderId(orderId)
+                .stream()
+                .map(item -> {
+
+                    OrderDetailsDTO dto = new OrderDetailsDTO();
+
+                    dto.setOrderId(item.getOrder().getId());
+
+                    dto.setPizzaName(item.getPizza().getName());
+
+                    dto.setQuantity(item.getQuantity());
+
+                    dto.setPrice(item.getPizza().getPrice());
+
+                    dto.setTotal(
+                            item.getPizza()
+                                    .getPrice()
+                                    .multiply(
+                                            java.math.BigDecimal.valueOf(
+                                                    item.getQuantity()
+                                            )
+                                    )
+                    );
+
+                    dto.setStatus(
+                            item.getOrder()
+                                    .getStatus()
+                                    .name()
+                    );
+
+                    dto.setCreatedOn(
+                            item.getOrder()
+                                    .getCreatedOn()
+                    );
+
+                    return dto;
+
+                })
+                .toList();
     }
 }

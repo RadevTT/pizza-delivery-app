@@ -63,4 +63,17 @@ public class OrderController {
 
         return "redirect:/orders";
     }
+
+    @GetMapping("/{id}")
+    public String orderDetails(
+            @PathVariable UUID id,
+            Model model) {
+
+        model.addAttribute(
+                "details",
+                orderService.getOrderDetails(id)
+        );
+
+        return "order-details";
+    }
 }

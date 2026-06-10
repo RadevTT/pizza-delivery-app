@@ -37,14 +37,26 @@
       <th>Order ID</th>
       <th>Status</th>
       <th>Created On</th>
+      <th>Details</th>
     </tr>
     </thead>
 
     <tbody>
     <tr th:each="order : ${orders}">
       <td th:text="${order.id}">id</td>
+
       <td th:text="${order.status}">status</td>
-      <td th:text="${#temporals.format(order.createdOn, 'dd.MM.yyyy HH:mm')}">created</td>
+
+      <td th:text="${#temporals.format(order.createdOn, 'dd.MM.yyyy HH:mm')}">
+        created
+      </td>
+
+      <td>
+        <a th:href="@{'/orders/' + ${order.id}}"
+           class="btn btn-primary btn-sm">
+          View
+        </a>
+      </td>
     </tr>
     </tbody>
 
