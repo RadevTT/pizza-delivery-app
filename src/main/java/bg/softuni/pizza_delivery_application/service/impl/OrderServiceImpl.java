@@ -112,4 +112,23 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .toList();
     }
+    @Override
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    @Override
+    public void changeStatus(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        switch (order.getStatus()) {
+            case PENDING -> order.setStatus(OrderStatus.PREPARING);
+            case PREPARING -> order.setStatus(OrderStatus.DELIVERED);
+            case DELIVERED -> order.setStatus(OrderStatus.DELIVERED);
+            case CANCELLED -> order.setStatus(OrderStatus.CANCELLED);
+        }
+
+        orderRepository.save(order);
+    }
 }

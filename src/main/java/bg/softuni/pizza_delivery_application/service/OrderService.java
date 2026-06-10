@@ -14,4 +14,8 @@ public interface OrderService {
     List<Order> getOrdersForUser(String username);
 
     List<OrderDetailsDTO> getOrderDetails(UUID orderId);
+
+    List<Order> getAllOrders();
+
+    void changeStatus(UUID orderId);
 }
