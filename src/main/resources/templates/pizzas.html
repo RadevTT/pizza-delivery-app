@@ -68,6 +68,11 @@
 
                 <div class="card-footer bg-white">
 
+                    <a th:href="@{'/orders/create/' + ${pizza.id}}"
+                       class="btn btn-primary w-100 mb-2">
+                        Order
+                    </a>
+
                     <a th:href="@{'/pizzas/edit/' + ${pizza.id}}"
                        class="btn btn-warning w-100 mb-2">
                         Edit
