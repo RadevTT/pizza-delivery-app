@@ -1,9 +1,11 @@
 package bg.softuni.pizza_delivery_application.model.dto;
 
 public class UserRegisterDTO {
+
     private String username;
     private String email;
     private String password;
+    private String confirmPassword;
 
     public UserRegisterDTO() {
     }
@@ -30,5 +32,13 @@ public class UserRegisterDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }
