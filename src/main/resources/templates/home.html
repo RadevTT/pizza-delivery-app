@@ -25,10 +25,11 @@
             <b th:text="${#authentication.name}">User</b>
         </span>
 
-    <a class="btn btn-outline-light btn-sm"
-       th:href="@{/logout}">
-      Logout
-    </a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+      <button type="submit" class="btn btn-outline-light btn-sm">
+        Logout
+      </button>
+    </form>
 
   </div>
 

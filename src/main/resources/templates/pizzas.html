@@ -23,10 +23,11 @@
                 Add Pizza
             </a>
 
-            <a href="/logout"
-               class="btn btn-danger">
-                Logout
-            </a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    Logout
+                </button>
+            </form>
         </div>
 
     </div>
