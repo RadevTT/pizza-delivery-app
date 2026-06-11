@@ -55,7 +55,7 @@ public class PizzaController {
         return "redirect:/pizzas";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deletePizza(@PathVariable UUID id) {
 
         pizzaService.deletePizza(id);

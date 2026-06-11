@@ -82,10 +82,11 @@
                         Edit
                     </a>
 
-                    <a th:href="@{'/pizzas/delete/' + ${pizza.id}}"
-                       class="btn btn-danger w-100">
-                        Delete
-                    </a>
+                    <form th:action="@{'/pizzas/delete/' + ${pizza.id}}" method="post">
+                        <button type="submit" class="btn btn-danger w-100">
+                            Delete
+                        </button>
+                    </form>
 
                 </div>
 
