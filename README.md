@@ -46,10 +46,22 @@ The application supports user registration and authentication, role-based author
 
 ---
 
+## Functionalities
+
+The application supports the following domain functionalities:
+
+1. Create Pizza
+2. Edit Pizza
+3. Delete Pizza
+4. Create Order
+5. Change Order Status (Admin)
+
+---
+
 ## Technologies
 
 * Java 17
-* Spring Boot
+* Spring Boot 3.4.0
 * Spring Security
 * Spring Data JPA
 * Hibernate
@@ -66,7 +78,7 @@ The application uses MySQL as the primary database.
 
 All entities use UUID as primary keys.
 
-Entity relationships include:
+### Entity Relationships
 
 * User ↔ Role
 * User ↔ Order
@@ -74,6 +86,28 @@ Entity relationships include:
 * OrderItem ↔ Pizza
 
 Passwords are stored hashed using BCrypt.
+
+---
+
+## Security
+
+### Guest
+
+* Register
+* Login
+
+### USER
+
+* View pizzas
+* Create orders
+* View personal orders
+* View profile
+
+### ADMIN
+
+* All USER permissions
+* View all orders
+* Change order statuses
 
 ---
 
@@ -140,7 +174,7 @@ Using IntelliJ IDEA:
 * Load Maven dependencies
 * Run PizzaDeliveryApplication
 
-Or use Maven:
+Or use Maven Wrapper:
 
 ```bash
 ./mvnw spring-boot:run
@@ -163,4 +197,5 @@ during startup.
 
 Teodor Radev
 
-Spring Boot Pizza Delivery Project
+Spring Fundamentals Individual Project
+SoftUni – May 2026
