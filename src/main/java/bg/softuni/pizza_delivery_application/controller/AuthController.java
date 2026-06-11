@@ -2,12 +2,11 @@ package bg.softuni.pizza_delivery_application.controller;
 
 import bg.softuni.pizza_delivery_application.model.dto.UserRegisterDTO;
 import bg.softuni.pizza_delivery_application.service.UserService;
-
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class AuthController {
@@ -20,16 +19,27 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("user", new UserRegisterDTO());
+
+        if (!model.containsAttribute("user")) {
+            model.addAttribute("user", new UserRegisterDTO());
+        }
+
         return "register";
     }
+
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute UserRegisterDTO dto) {
+    public String register(
+            @Valid @ModelAttribute("user") UserRegisterDTO dto,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
 
         userService.register(dto);
 

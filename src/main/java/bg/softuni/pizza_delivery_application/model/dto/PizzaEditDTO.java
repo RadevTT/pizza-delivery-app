@@ -18,7 +18,8 @@ public class PizzaEditDTO {
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     private BigDecimal price;
 
-    @Size(min = 5, message = "Description must be at least 5 characters")
+    @NotBlank(message = "Description is required")
+    @Size(min = 5, max = 255, message = "Description must be between 5 and 255 characters")
     private String description;
 
     private String imageUrl;
