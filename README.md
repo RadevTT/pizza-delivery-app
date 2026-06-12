@@ -4,7 +4,7 @@
 
 Pizza Delivery Application is a Spring Boot web application for managing pizzas and customer orders.
 
-The application supports user registration and authentication, role-based authorization, pizza management, order creation, and order administration.
+The application supports user registration and authentication, role-based authorization, pizza management, order creation, order tracking, and order administration.
 
 ---
 
@@ -17,14 +17,16 @@ The application supports user registration and authentication, role-based author
 * User logout
 * Password encryption using BCrypt
 * Spring Security integration
+* Role-based access control
 * USER and ADMIN roles
 
-### Pizza Management
+### Pizza Management (ADMIN)
 
 * Add pizza
 * Edit pizza
 * Delete pizza
-* View all pizzas
+* Upload pizza image URL
+* Manage pizza menu
 
 ### Orders
 
@@ -44,17 +46,23 @@ The application supports user registration and authentication, role-based author
 * View profile information
 * Display user roles
 
+### Error Handling
+
+* Username already exists validation
+* Access denied page
+* Global exception handling
+
 ---
 
 ## Functionalities
 
 The application supports the following domain functionalities:
 
-1. Create Pizza
-2. Edit Pizza
-3. Delete Pizza
-4. Create Order
-5. Change Order Status (Admin)
+1. Create Pizza (ADMIN)
+2. Edit Pizza (ADMIN)
+3. Delete Pizza (ADMIN)
+4. Create Order (USER)
+5. Change Order Status (ADMIN)
 
 ---
 
@@ -101,13 +109,21 @@ Passwords are stored hashed using BCrypt.
 * View pizzas
 * Create orders
 * View personal orders
+* View order details
 * View profile
 
 ### ADMIN
 
 * All USER permissions
+* Add pizzas
+* Edit pizzas
+* Delete pizzas
 * View all orders
 * Change order statuses
+
+Role restrictions are enforced through Spring Security.
+
+Unauthorized users are redirected to a custom Access Denied page.
 
 ---
 
@@ -134,7 +150,8 @@ src
 ├── model
 │   ├── entity
 │   ├── dto
-│   └── enums
+│   ├── enums
+│   └── view
 ├── config
 ├── exception
 └── templates
@@ -191,6 +208,23 @@ The application automatically initializes:
 
 during startup.
 
+The first administrator can be assigned the ADMIN role through the database.
+
+---
+
+## Validation
+
+The application uses Jakarta Validation for form validation.
+
+Examples:
+
+* Required fields validation
+* Username length validation
+* Pizza name validation
+* Price validation
+* Quantity validation
+* Password confirmation validation
+
 ---
 
 ## Author
@@ -198,4 +232,5 @@ during startup.
 Teodor Radev
 
 Spring Fundamentals Individual Project
+
 SoftUni – May 2026
