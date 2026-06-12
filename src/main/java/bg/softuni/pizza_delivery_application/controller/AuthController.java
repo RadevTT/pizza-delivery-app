@@ -37,6 +37,16 @@ public class AuthController {
             @Valid @ModelAttribute("user") UserRegisterDTO dto,
             BindingResult bindingResult) {
 
+        if (dto.getPassword() != null &&
+                !dto.getPassword().equals(dto.getConfirmPassword())) {
+
+            bindingResult.rejectValue(
+                    "confirmPassword",
+                    "password.mismatch",
+                    "Passwords do not match"
+            );
+        }
+
         if (bindingResult.hasErrors()) {
             return "register";
         }

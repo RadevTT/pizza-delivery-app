@@ -33,10 +33,6 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
 
-        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
         Role userRole = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
 

@@ -18,6 +18,7 @@ public class UserRegisterDTO {
     @Size(min = 4, message = "Password must be at least 4 characters")
     private String password;
 
+    @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
 
     public UserRegisterDTO() {
