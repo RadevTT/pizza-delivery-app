@@ -38,6 +38,7 @@ The application supports user registration and authentication, role-based author
 ### Admin Panel
 
 * View all orders
+* View order details
 * Manage order statuses
 * Update order workflow
 
@@ -119,6 +120,7 @@ Passwords are stored hashed using BCrypt.
 * Edit pizzas
 * Delete pizzas
 * View all orders
+* View order details
 * Change order statuses
 
 Role restrictions are enforced through Spring Security.
