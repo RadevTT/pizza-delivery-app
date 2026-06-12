@@ -8,29 +8,43 @@
         rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/css/style.css}">
-
 </head>
 
 <body class="bg-light">
 
 <nav class="navbar navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" th:href="@{/home}">🍕 Pizza Delivery Admin</a>
+
+    <a class="navbar-brand" th:href="@{/home}">
+      🍕 Pizza Delivery Admin
+    </a>
 
     <div>
-      <a class="btn btn-outline-light me-2" th:href="@{/pizzas}">Pizzas</a>
-      <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-danger">
+      <a class="btn btn-outline-light me-2"
+         th:href="@{/pizzas}">
+        Pizzas
+      </a>
+
+      <form th:action="@{/logout}"
+            method="post"
+            style="display:inline;">
+
+        <button type="submit"
+                class="btn btn-danger">
           Logout
         </button>
+
       </form>
     </div>
+
   </div>
 </nav>
 
 <div class="container mt-5">
 
-  <h1 class="mb-4 page-title">All Orders</h1>
+  <h1 class="mb-4 page-title">
+    All Orders
+  </h1>
 
   <table class="table table-bordered table-striped bg-white shadow-sm">
 
@@ -40,21 +54,36 @@
       <th>User</th>
       <th>Status</th>
       <th>Created On</th>
+      <th>Details</th>
       <th>Action</th>
     </tr>
     </thead>
 
     <tbody>
+
     <tr th:each="order : ${orders}">
 
-      <td th:text="${order.id}">id</td>
+      <td th:text="${order.id}">
+        id
+      </td>
 
-      <td th:text="${order.user.username}">username</td>
+      <td th:text="${order.user.username}">
+        username
+      </td>
 
-      <td th:text="${order.status}">status</td>
+      <td th:text="${order.status}">
+        status
+      </td>
 
       <td th:text="${#temporals.format(order.createdOn, 'dd.MM.yyyy HH:mm')}">
         created
+      </td>
+
+      <td>
+        <a th:href="@{'/orders/' + ${order.id}}"
+           class="btn btn-primary btn-sm">
+          Details
+        </a>
       </td>
 
       <td>
@@ -70,6 +99,7 @@
       </td>
 
     </tr>
+
     </tbody>
 
   </table>
