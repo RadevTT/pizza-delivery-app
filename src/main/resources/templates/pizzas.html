@@ -22,6 +22,11 @@
         </a>
 
         <div>
+            <a class="btn btn-outline-light me-2"
+               th:href="@{/orders}">
+                Orders
+            </a>
+
             <a sec:authorize="hasRole('ADMIN')"
                th:href="@{/pizzas/add}"
                class="btn btn-success me-2">
