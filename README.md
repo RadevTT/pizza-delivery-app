@@ -152,8 +152,7 @@ src
 ├── model
 │   ├── entity
 │   ├── dto
-│   ├── enums
-│   └── view
+│   └── enums
 ├── config
 ├── exception
 └── templates
@@ -210,7 +209,18 @@ The application automatically initializes:
 
 during startup.
 
-The first administrator can be assigned the ADMIN role through the database.
+---
+
+## Administrator Access
+
+The application automatically creates the USER and ADMIN roles.
+
+To test administrator functionality:
+
+1. Register a user account.
+2. Assign the ADMIN role to the user in the database.
+3. Log in again.
+4. The Admin Panel will become available from the dashboard.
 
 ---
 
@@ -226,6 +236,17 @@ Examples:
 * Price validation
 * Quantity validation
 * Password confirmation validation
+
+---
+
+## Error Handling
+
+The application includes:
+
+* UsernameAlreadyExistsException
+* GlobalExceptionHandler
+* Custom Access Denied page
+* Validation error handling
 
 ---
 
