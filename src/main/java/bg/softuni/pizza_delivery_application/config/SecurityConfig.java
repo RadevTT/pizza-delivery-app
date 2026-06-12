@@ -16,7 +16,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers("/pizzas/add").hasRole("ADMIN")
+                        .requestMatchers("/pizzas/edit/**").hasRole("ADMIN")
+                        .requestMatchers("/pizzas/delete/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

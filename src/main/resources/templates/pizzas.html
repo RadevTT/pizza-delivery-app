@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>All Pizzas</title>
@@ -8,7 +10,6 @@
           rel="stylesheet">
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
-
 </head>
 
 <body class="bg-light">
@@ -16,12 +17,13 @@
 <nav class="navbar navbar-dark bg-dark">
     <div class="container">
 
-        <a class="navbar-brand" href="/home">
+        <a class="navbar-brand" th:href="@{/home}">
             🍕 Pizza Delivery
         </a>
 
         <div>
-            <a href="/pizzas/add"
+            <a sec:authorize="hasRole('ADMIN')"
+               th:href="@{/pizzas/add}"
                class="btn btn-success me-2">
                 Add Pizza
             </a>
@@ -58,14 +60,16 @@
 
                     <h4 class="card-title"
                         th:text="${pizza.name}">
+                        Pizza Name
                     </h4>
 
                     <p class="card-text"
                        th:text="${pizza.description}">
+                        Pizza description
                     </p>
 
                     <h5 class="text-success">
-                        € <span th:text="${pizza.price}"></span>
+                        €<span th:text="${pizza.price}">0.00</span>
                     </h5>
 
                 </div>
@@ -77,15 +81,21 @@
                         Order
                     </a>
 
-                    <a th:href="@{'/pizzas/edit/' + ${pizza.id}}"
+                    <a sec:authorize="hasRole('ADMIN')"
+                       th:href="@{'/pizzas/edit/' + ${pizza.id}}"
                        class="btn btn-warning w-100 mb-2">
                         Edit
                     </a>
 
-                    <form th:action="@{'/pizzas/delete/' + ${pizza.id}}" method="post">
-                        <button type="submit" class="btn btn-danger w-100">
+                    <form sec:authorize="hasRole('ADMIN')"
+                          th:action="@{'/pizzas/delete/' + ${pizza.id}}"
+                          method="post">
+
+                        <button type="submit"
+                                class="btn btn-danger w-100">
                             Delete
                         </button>
+
                     </form>
 
                 </div>
