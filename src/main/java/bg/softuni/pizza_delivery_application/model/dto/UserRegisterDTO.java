@@ -3,6 +3,7 @@ package bg.softuni.pizza_delivery_application.model.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class UserRegisterDTO {
 
@@ -15,7 +16,11 @@ public class UserRegisterDTO {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 4, message = "Password must be at least 4 characters")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*[^A-Za-z0-9]).+$",
+            message = "Password must contain at least one letter and one special character"
+    )
     private String password;
 
     @NotBlank(message = "Confirm password is required")
