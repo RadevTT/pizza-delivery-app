@@ -47,6 +47,22 @@ public class AuthController {
             );
         }
 
+        if (userService.usernameExists(dto.getUsername())) {
+            bindingResult.rejectValue(
+                    "username",
+                    "username.exists",
+                    "Username already exists"
+            );
+        }
+
+        if (userService.emailExists(dto.getEmail())) {
+            bindingResult.rejectValue(
+                    "email",
+                    "email.exists",
+                    "Email already exists"
+            );
+        }
+
         if (bindingResult.hasErrors()) {
             return "register";
         }
