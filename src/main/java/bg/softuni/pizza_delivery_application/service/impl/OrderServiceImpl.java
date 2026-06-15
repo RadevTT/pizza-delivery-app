@@ -76,6 +76,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDetailsDTO> getOrderDetails(UUID orderId) {
 
+        orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+
         return orderItemService.findAllByOrderId(orderId)
                 .stream()
                 .map(item -> {
