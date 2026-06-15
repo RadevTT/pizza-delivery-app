@@ -1,5 +1,8 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
+import bg.softuni.pizza_delivery_application.exception.OrderNotFoundException;
+import bg.softuni.pizza_delivery_application.exception.PizzaNotFoundException;
+import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.model.dto.OrderCreateDTO;
 import bg.softuni.pizza_delivery_application.model.dto.OrderDetailsDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Order;
@@ -7,13 +10,14 @@ import bg.softuni.pizza_delivery_application.model.entity.OrderItem;
 import bg.softuni.pizza_delivery_application.model.entity.Pizza;
 import bg.softuni.pizza_delivery_application.model.entity.User;
 import bg.softuni.pizza_delivery_application.model.enums.OrderStatus;
-import bg.softuni.pizza_delivery_application.repository.OrderItemRepository;
 import bg.softuni.pizza_delivery_application.repository.OrderRepository;
 import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.repository.UserRepository;
+import bg.softuni.pizza_delivery_application.service.OrderItemService;
 import bg.softuni.pizza_delivery_application.service.OrderService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -22,16 +26,16 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderItemService orderItemService;
     private final PizzaRepository pizzaRepository;
     private final UserRepository userRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository,
-                            OrderItemRepository orderItemRepository,
+                            OrderItemService orderItemService,
                             PizzaRepository pizzaRepository,
                             UserRepository userRepository) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.orderItemService = orderItemService;
         this.pizzaRepository = pizzaRepository;
         this.userRepository = userRepository;
     }
@@ -40,10 +44,10 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(OrderCreateDTO dto, String username) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Pizza pizza = pizzaRepository.findById(dto.getPizzaId())
-                .orElseThrow(() -> new RuntimeException("Pizza not found"));
+                .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
 
         Order order = new Order();
         order.setUser(user);
@@ -57,14 +61,14 @@ public class OrderServiceImpl implements OrderService {
         item.setPizza(pizza);
         item.setQuantity(dto.getQuantity());
 
-        orderItemRepository.save(item);
+        orderItemService.save(item);
     }
 
     @Override
     public List<Order> getOrdersForUser(String username) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return orderRepository.findAllByUserOrderByCreatedOnDesc(user);
     }
@@ -72,46 +76,31 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDetailsDTO> getOrderDetails(UUID orderId) {
 
-        return orderItemRepository.findAllByOrderId(orderId)
+        return orderItemService.findAllByOrderId(orderId)
                 .stream()
                 .map(item -> {
 
                     OrderDetailsDTO dto = new OrderDetailsDTO();
 
                     dto.setOrderId(item.getOrder().getId());
-
                     dto.setPizzaName(item.getPizza().getName());
-
                     dto.setQuantity(item.getQuantity());
-
                     dto.setPrice(item.getPizza().getPrice());
 
                     dto.setTotal(
                             item.getPizza()
                                     .getPrice()
-                                    .multiply(
-                                            java.math.BigDecimal.valueOf(
-                                                    item.getQuantity()
-                                            )
-                                    )
+                                    .multiply(BigDecimal.valueOf(item.getQuantity()))
                     );
 
-                    dto.setStatus(
-                            item.getOrder()
-                                    .getStatus()
-                                    .name()
-                    );
-
-                    dto.setCreatedOn(
-                            item.getOrder()
-                                    .getCreatedOn()
-                    );
+                    dto.setStatus(item.getOrder().getStatus().name());
+                    dto.setCreatedOn(item.getOrder().getCreatedOn());
 
                     return dto;
-
                 })
                 .toList();
     }
+
     @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -119,8 +108,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void changeStatus(UUID orderId) {
+
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
         switch (order.getStatus()) {
             case PENDING -> order.setStatus(OrderStatus.PREPARING);

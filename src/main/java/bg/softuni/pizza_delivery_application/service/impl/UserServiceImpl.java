@@ -1,5 +1,7 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
+import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
+import bg.softuni.pizza_delivery_application.exception.RoleNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UsernameAlreadyExistsException;
 import bg.softuni.pizza_delivery_application.model.dto.UserRegisterDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Role;
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Role userRole = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+                .orElseThrow(() -> new RoleNotFoundException("ROLE_USER not found"));
 
         User user = new User();
 
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override

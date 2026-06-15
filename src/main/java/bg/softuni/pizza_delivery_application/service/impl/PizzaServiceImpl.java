@@ -1,5 +1,6 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
+import bg.softuni.pizza_delivery_application.exception.PizzaNotFoundException;
 import bg.softuni.pizza_delivery_application.model.dto.PizzaAddDTO;
 import bg.softuni.pizza_delivery_application.model.dto.PizzaEditDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Pizza;
@@ -40,7 +41,7 @@ public class PizzaServiceImpl implements PizzaService {
     @Override
     public Pizza findById(UUID id) {
         return pizzaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pizza not found"));
+                .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
     }
 
     @Override
@@ -51,7 +52,7 @@ public class PizzaServiceImpl implements PizzaService {
     @Override
     public PizzaEditDTO getPizzaForEdit(UUID id) {
         Pizza pizza = pizzaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pizza not found"));
+                .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
 
         return new PizzaEditDTO()
                 .setId(pizza.getId())
@@ -64,7 +65,7 @@ public class PizzaServiceImpl implements PizzaService {
     @Override
     public void editPizza(PizzaEditDTO dto) {
         Pizza pizza = pizzaRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Pizza not found"));
+                .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
 
         pizza.setName(dto.getName());
         pizza.setPrice(dto.getPrice());
