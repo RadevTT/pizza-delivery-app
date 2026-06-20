@@ -232,10 +232,13 @@ Examples:
 
 * Required fields validation
 * Username length validation
+* Unique username validation
+* Unique email validation
+* Password strength validation
+* Password confirmation validation
 * Pizza name validation
 * Price validation
 * Quantity validation
-* Password confirmation validation
 
 ---
 
