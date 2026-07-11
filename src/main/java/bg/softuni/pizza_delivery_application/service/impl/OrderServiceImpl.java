@@ -1,5 +1,7 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
+import bg.softuni.pizza_delivery_application.client.DeliveryClient;
+import bg.softuni.pizza_delivery_application.client.dto.DeliveryCreateRequest;
 import bg.softuni.pizza_delivery_application.exception.OrderNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.PizzaNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
@@ -29,15 +31,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemService orderItemService;
     private final PizzaRepository pizzaRepository;
     private final UserRepository userRepository;
+    private final DeliveryClient deliveryClient;
 
     public OrderServiceImpl(OrderRepository orderRepository,
                             OrderItemService orderItemService,
                             PizzaRepository pizzaRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            DeliveryClient deliveryClient) {
+
         this.orderRepository = orderRepository;
         this.orderItemService = orderItemService;
         this.pizzaRepository = pizzaRepository;
         this.userRepository = userRepository;
+        this.deliveryClient = deliveryClient;
     }
 
     @Override
@@ -62,6 +68,14 @@ public class OrderServiceImpl implements OrderService {
         item.setQuantity(dto.getQuantity());
 
         orderItemService.save(item);
+
+        DeliveryCreateRequest deliveryRequest = new DeliveryCreateRequest(
+                savedOrder.getId(),
+                dto.getAddress(),
+                dto.getPhoneNumber()
+        );
+
+        deliveryClient.createDelivery(deliveryRequest);
     }
 
     @Override

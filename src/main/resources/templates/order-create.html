@@ -53,6 +53,34 @@
         </small>
       </div>
 
+      <div class="mb-3">
+        <label class="form-label">Delivery address</label>
+
+        <input type="text"
+               th:field="*{address}"
+               class="form-control"
+               placeholder="Sofia, Vitosha Boulevard 10">
+
+        <small class="text-danger"
+               th:if="${#fields.hasErrors('address')}"
+               th:errors="*{address}">
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Phone number</label>
+
+        <input type="text"
+               th:field="*{phoneNumber}"
+               class="form-control"
+               placeholder="+359888123456">
+
+        <small class="text-danger"
+               th:if="${#fields.hasErrors('phoneNumber')}"
+               th:errors="*{phoneNumber}">
+        </small>
+      </div>
+
       <button type="submit" class="btn btn-success w-100">
         Confirm Order
       </button>
