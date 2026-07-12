@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findAllByOrderByCreatedOnDesc();
     }
 
     @Override
@@ -156,6 +156,25 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void cancelOrder(UUID orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+
+        if (order.getStatus() != OrderStatus.PENDING
+                && order.getStatus() != OrderStatus.PREPARING) {
+            return;
+        }
+
+        DeliveryResponse delivery = deliveryClient.getByOrderId(orderId);
+
+        deliveryClient.cancelDelivery(delivery.getId());
+
+        order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
 }

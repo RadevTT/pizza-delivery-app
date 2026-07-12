@@ -18,4 +18,6 @@ public interface OrderService {
     List<Order> getAllOrders();
 
     void changeStatus(UUID orderId);
+
+    void cancelOrder(UUID orderId);
 }

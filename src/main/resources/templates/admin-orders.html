@@ -46,6 +46,11 @@
     All Orders
   </h1>
 
+  <div th:if="${successMessage}"
+       class="alert alert-success"
+       th:text="${successMessage}">
+  </div>
+
   <table class="table table-bordered table-striped bg-white shadow-sm">
 
     <thead class="table-dark">
@@ -55,7 +60,7 @@
       <th>Status</th>
       <th>Created On</th>
       <th>Details</th>
-      <th>Action</th>
+      <th>Actions</th>
     </tr>
     </thead>
 
@@ -71,8 +76,31 @@
         username
       </td>
 
-      <td th:text="${order.status}">
-        status
+      <td>
+                <span th:if="${order.status.name() == 'PENDING'}"
+                      class="badge text-bg-warning">
+                    PENDING
+                </span>
+
+        <span th:if="${order.status.name() == 'PREPARING'}"
+              class="badge text-bg-primary">
+                    PREPARING
+                </span>
+
+        <span th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+              class="badge text-bg-info">
+                    OUT FOR DELIVERY
+                </span>
+
+        <span th:if="${order.status.name() == 'DELIVERED'}"
+              class="badge text-bg-success">
+                    DELIVERED
+                </span>
+
+        <span th:if="${order.status.name() == 'CANCELLED'}"
+              class="badge text-bg-danger">
+                    CANCELLED
+                </span>
       </td>
 
       <td th:text="${#temporals.format(order.createdOn, 'dd.MM.yyyy HH:mm')}">
@@ -87,23 +115,39 @@
       </td>
 
       <td>
+        <div class="d-flex gap-2">
 
-        <form th:if="${order.status.name() != 'DELIVERED' and order.status.name() != 'CANCELLED'}"
-              th:action="@{'/admin/orders/change-status/' + ${order.id}}"
-              method="post">
+          <form th:if="${order.status.name() != 'DELIVERED'
+                                  and order.status.name() != 'CANCELLED'}"
+                th:action="@{'/admin/orders/change-status/' + ${order.id}}"
+                method="post">
 
-          <button class="btn btn-warning btn-sm"
-                  type="submit">
-            Next Status
-          </button>
+            <button class="btn btn-warning btn-sm"
+                    type="submit">
+              Next Status
+            </button>
 
-        </form>
+          </form>
 
-        <span th:if="${order.status.name() == 'DELIVERED' or order.status.name() == 'CANCELLED'}"
-              class="text-muted fw-bold">
-                    Final Status
-                </span>
+          <form th:if="${order.status.name() == 'PENDING'
+                                  or order.status.name() == 'PREPARING'}"
+                th:action="@{'/admin/orders/cancel/' + ${order.id}}"
+                method="post">
 
+            <button class="btn btn-danger btn-sm"
+                    type="submit">
+              Cancel
+            </button>
+
+          </form>
+
+          <span th:if="${order.status.name() == 'DELIVERED'
+                                  or order.status.name() == 'CANCELLED'}"
+                class="text-muted fw-bold">
+                        Final status
+                    </span>
+
+        </div>
       </td>
 
     </tr>
