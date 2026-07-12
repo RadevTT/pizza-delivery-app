@@ -19,6 +19,7 @@ import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.OrderItemService;
 import bg.softuni.pizza_delivery_application.service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void createOrder(OrderCreateDTO dto, String username) {
 
         User user = userRepository.findByUsername(username)

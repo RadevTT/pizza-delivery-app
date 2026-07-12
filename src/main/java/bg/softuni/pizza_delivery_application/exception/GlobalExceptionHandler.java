@@ -18,12 +18,12 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public String handleRuntimeException(
-            RuntimeException ex,
+    @ExceptionHandler(DeliveryServiceUnavailableException.class)
+    public String handleDeliveryServiceUnavailable(
+            DeliveryServiceUnavailableException exception,
             Model model) {
 
-        model.addAttribute("errorMessage", ex.getMessage());
+        model.addAttribute("errorMessage", exception.getMessage());
 
         return "error";
     }
@@ -37,6 +37,16 @@ public class GlobalExceptionHandler {
                 "errorMessage",
                 "Access denied. You do not have permission to access this page."
         );
+
+        return "error";
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public String handleRuntimeException(
+            RuntimeException ex,
+            Model model) {
+
+        model.addAttribute("errorMessage", ex.getMessage());
 
         return "error";
     }

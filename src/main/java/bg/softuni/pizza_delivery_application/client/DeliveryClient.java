@@ -2,6 +2,7 @@ package bg.softuni.pizza_delivery_application.client;
 
 import bg.softuni.pizza_delivery_application.client.dto.DeliveryCreateRequest;
 import bg.softuni.pizza_delivery_application.client.dto.DeliveryResponse;
+import bg.softuni.pizza_delivery_application.client.fallback.DeliveryClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,8 @@ import java.util.UUID;
 
 @FeignClient(
         name = "delivery-service",
-        url = "${delivery.service.url}"
+        url = "${delivery.service.url}",
+        fallback = DeliveryClientFallback.class
 )
 public interface DeliveryClient {
 
