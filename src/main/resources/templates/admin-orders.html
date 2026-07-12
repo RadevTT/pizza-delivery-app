@@ -87,7 +87,9 @@
       </td>
 
       <td>
-        <form th:action="@{'/admin/orders/change-status/' + ${order.id}}"
+
+        <form th:if="${order.status.name() != 'DELIVERED' and order.status.name() != 'CANCELLED'}"
+              th:action="@{'/admin/orders/change-status/' + ${order.id}}"
               method="post">
 
           <button class="btn btn-warning btn-sm"
@@ -96,6 +98,12 @@
           </button>
 
         </form>
+
+        <span th:if="${order.status.name() == 'DELIVERED' or order.status.name() == 'CANCELLED'}"
+              class="text-muted fw-bold">
+                    Final Status
+                </span>
+
       </td>
 
     </tr>

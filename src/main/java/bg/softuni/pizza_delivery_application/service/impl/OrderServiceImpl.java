@@ -2,6 +2,7 @@ package bg.softuni.pizza_delivery_application.service.impl;
 
 import bg.softuni.pizza_delivery_application.client.DeliveryClient;
 import bg.softuni.pizza_delivery_application.client.dto.DeliveryCreateRequest;
+import bg.softuni.pizza_delivery_application.client.dto.DeliveryResponse;
 import bg.softuni.pizza_delivery_application.exception.OrderNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.PizzaNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
@@ -131,9 +132,28 @@ public class OrderServiceImpl implements OrderService {
 
         switch (order.getStatus()) {
             case PENDING -> order.setStatus(OrderStatus.PREPARING);
-            case PREPARING -> order.setStatus(OrderStatus.DELIVERED);
-            case DELIVERED -> order.setStatus(OrderStatus.DELIVERED);
-            case CANCELLED -> order.setStatus(OrderStatus.CANCELLED);
+
+            case PREPARING -> {
+                order.setStatus(OrderStatus.OUT_FOR_DELIVERY);
+
+                DeliveryResponse delivery =
+                        deliveryClient.getByOrderId(orderId);
+
+                deliveryClient.dispatchDelivery(delivery.getId());
+            }
+
+            case OUT_FOR_DELIVERY -> {
+                order.setStatus(OrderStatus.DELIVERED);
+
+                DeliveryResponse delivery =
+                        deliveryClient.getByOrderId(orderId);
+
+                deliveryClient.completeDelivery(delivery.getId());
+            }
+
+            case DELIVERED, CANCELLED -> {
+                return;
+            }
         }
 
         orderRepository.save(order);
