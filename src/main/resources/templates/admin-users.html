@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Users</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+
+    <a class="navbar-brand" th:href="@{/home}">
+      🍕 Pizza Delivery Admin
+    </a>
+
+    <div>
+      <a class="btn btn-outline-light me-2"
+         th:href="@{/admin/orders}">
+        Orders
+      </a>
+
+      <a class="btn btn-outline-light me-2"
+         th:href="@{/pizzas}">
+        Pizzas
+      </a>
+
+      <form th:action="@{/logout}"
+            method="post"
+            style="display:inline;">
+
+        <button type="submit"
+                class="btn btn-danger">
+          Logout
+        </button>
+
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+
+  <h1 class="mb-4 page-title">
+    User Management
+  </h1>
+
+  <div th:if="${successMessage}"
+       class="alert alert-success"
+       th:text="${successMessage}">
+  </div>
+
+  <table class="table table-bordered table-striped bg-white shadow-sm">
+
+    <thead class="table-dark">
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr th:each="user : ${users}">
+
+      <td th:text="${user.username}">
+        username
+      </td>
+
+      <td th:text="${user.email}">
+        email
+      </td>
+
+      <td>
+                <span th:if="${user.admin}"
+                      class="badge text-bg-danger">
+                    ADMIN
+                </span>
+
+        <span th:unless="${user.admin}"
+              class="badge text-bg-primary">
+                    USER
+                </span>
+      </td>
+
+      <td>
+        <form th:unless="${user.admin}"
+              th:action="@{'/admin/users/' + ${user.id} + '/add-admin'}"
+              method="post">
+
+          <button type="submit"
+                  class="btn btn-success btn-sm">
+            Make Admin
+          </button>
+        </form>
+
+        <form th:if="${user.admin}"
+              th:action="@{'/admin/users/' + ${user.id} + '/remove-admin'}"
+              method="post">
+
+          <button type="submit"
+                  class="btn btn-warning btn-sm">
+            Remove Admin
+          </button>
+        </form>
+      </td>
+
+    </tr>
+
+    </tbody>
+  </table>
+
+</div>
+
+</body>
+</html>

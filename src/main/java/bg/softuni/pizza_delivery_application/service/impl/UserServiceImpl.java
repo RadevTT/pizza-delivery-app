@@ -3,6 +3,7 @@ package bg.softuni.pizza_delivery_application.service.impl;
 import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.RoleNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UsernameAlreadyExistsException;
+import bg.softuni.pizza_delivery_application.model.dto.AdminUserDTO;
 import bg.softuni.pizza_delivery_application.model.dto.UserRegisterDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Role;
 import bg.softuni.pizza_delivery_application.model.entity.User;
@@ -12,6 +13,9 @@ import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,5 +67,63 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public List<AdminUserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::mapToAdminUserDTO)
+                .toList();
+    }
+
+    @Override
+    public void addAdminRole(UUID userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+                .orElseThrow(() -> new RoleNotFoundException("ROLE_ADMIN not found"));
+
+        user.getRoles().add(adminRole);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void removeAdminRole(UUID userId, String currentUsername) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (user.getUsername().equals(currentUsername)) {
+            throw new IllegalArgumentException(
+                    "You cannot remove your own administrator role."
+            );
+        }
+
+        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+                .orElseThrow(() -> new RoleNotFoundException("ROLE_ADMIN not found"));
+
+        user.getRoles().remove(adminRole);
+
+        userRepository.save(user);
+    }
+
+    private AdminUserDTO mapToAdminUserDTO(User user) {
+
+        AdminUserDTO dto = new AdminUserDTO();
+
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setAdmin(
+                user.getRoles()
+                        .stream()
+                        .anyMatch(role -> role.getName() == RoleName.ADMIN)
+        );
+
+        return dto;
     }
 }

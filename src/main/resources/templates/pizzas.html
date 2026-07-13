@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -22,9 +22,22 @@
         </a>
 
         <div>
+
             <a class="btn btn-outline-light me-2"
                th:href="@{/orders}">
                 Orders
+            </a>
+
+            <a sec:authorize="hasRole('ADMIN')"
+               class="btn btn-outline-light me-2"
+               th:href="@{/admin/orders}">
+                Admin Orders
+            </a>
+
+            <a sec:authorize="hasRole('ADMIN')"
+               class="btn btn-outline-light me-2"
+               th:href="@{/admin/users}">
+                Users
             </a>
 
             <a sec:authorize="hasRole('ADMIN')"
@@ -33,11 +46,17 @@
                 Add Pizza
             </a>
 
-            <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-outline-light btn-sm">
+            <form th:action="@{/logout}"
+                  method="post"
+                  style="display:inline;">
+
+                <button type="submit"
+                        class="btn btn-outline-light btn-sm">
                     Logout
                 </button>
+
             </form>
+
         </div>
 
     </div>
