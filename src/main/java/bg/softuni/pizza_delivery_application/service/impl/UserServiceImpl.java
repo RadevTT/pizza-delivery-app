@@ -4,6 +4,7 @@ import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.RoleNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UsernameAlreadyExistsException;
 import bg.softuni.pizza_delivery_application.model.dto.AdminUserDTO;
+import bg.softuni.pizza_delivery_application.model.dto.ProfileEditDTO;
 import bg.softuni.pizza_delivery_application.model.dto.UserRegisterDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Role;
 import bg.softuni.pizza_delivery_application.model.entity.User;
@@ -13,6 +14,7 @@ import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,6 +69,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    @Transactional
+    public void updateProfile(String username, ProfileEditDTO dto) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!user.getEmail().equals(dto.getEmail())
+                && userRepository.findByEmail(dto.getEmail()).isPresent()) {
+
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        user.setEmail(dto.getEmail());
+
+        if (dto.getPassword() != null
+                && !dto.getPassword().isBlank()) {
+
+            if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+                throw new IllegalArgumentException("Passwords do not match");
+            }
+
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        userRepository.saveAndFlush(user);
     }
 
     @Override
