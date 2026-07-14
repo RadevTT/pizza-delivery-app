@@ -8,6 +8,8 @@ import bg.softuni.delivery_service.model.entity.Delivery;
 import bg.softuni.delivery_service.model.enums.DeliveryStatus;
 import bg.softuni.delivery_service.repository.DeliveryRepository;
 import bg.softuni.delivery_service.service.DeliveryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,9 @@ import java.util.UUID;
 
 @Service
 public class DeliveryServiceImpl implements DeliveryService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(DeliveryServiceImpl.class);
 
     private final DeliveryRepository deliveryRepository;
 
@@ -26,6 +31,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryResponseDTO createDelivery(DeliveryCreateDTO dto) {
 
         if (deliveryRepository.existsByOrderId(dto.getOrderId())) {
+
+            LOGGER.warn(
+                    "Rejected duplicate delivery creation: orderId={}",
+                    dto.getOrderId()
+            );
+
             throw new DeliveryAlreadyExistsException();
         }
 
@@ -38,6 +49,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setCreatedOn(LocalDateTime.now());
 
         deliveryRepository.save(delivery);
+
+        LOGGER.info(
+                "Delivery created successfully: deliveryId={}, orderId={}",
+                delivery.getId(),
+                delivery.getOrderId()
+        );
 
         return map(delivery);
     }
@@ -59,10 +76,20 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
 
+        DeliveryStatus previousStatus = delivery.getStatus();
+
         delivery.setStatus(DeliveryStatus.ON_THE_WAY);
         delivery.setDispatchedOn(LocalDateTime.now());
 
         deliveryRepository.save(delivery);
+
+        LOGGER.info(
+                "Delivery dispatched: deliveryId={}, orderId={}, previousStatus={}, newStatus={}",
+                delivery.getId(),
+                delivery.getOrderId(),
+                previousStatus,
+                delivery.getStatus()
+        );
 
         return map(delivery);
     }
@@ -74,10 +101,20 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
 
+        DeliveryStatus previousStatus = delivery.getStatus();
+
         delivery.setStatus(DeliveryStatus.DELIVERED);
         delivery.setDeliveredOn(LocalDateTime.now());
 
         deliveryRepository.save(delivery);
+
+        LOGGER.info(
+                "Delivery completed: deliveryId={}, orderId={}, previousStatus={}, newStatus={}",
+                delivery.getId(),
+                delivery.getOrderId(),
+                previousStatus,
+                delivery.getStatus()
+        );
 
         return map(delivery);
     }
@@ -89,9 +126,19 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
 
+        DeliveryStatus previousStatus = delivery.getStatus();
+
         delivery.setStatus(DeliveryStatus.CANCELLED);
 
         deliveryRepository.save(delivery);
+
+        LOGGER.info(
+                "Delivery cancelled: deliveryId={}, orderId={}, previousStatus={}, newStatus={}",
+                delivery.getId(),
+                delivery.getOrderId(),
+                previousStatus,
+                delivery.getStatus()
+        );
     }
 
     private DeliveryResponseDTO map(Delivery delivery) {
