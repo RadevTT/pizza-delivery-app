@@ -18,6 +18,8 @@ import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.OrderItemService;
 import bg.softuni.pizza_delivery_application.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,9 @@ import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
     private final OrderItemService orderItemService;
@@ -79,6 +84,14 @@ public class OrderServiceImpl implements OrderService {
         );
 
         deliveryClient.createDelivery(deliveryRequest);
+
+        LOGGER.info(
+                "Order created successfully: orderId={}, username={}, pizzaId={}, quantity={}",
+                savedOrder.getId(),
+                username,
+                pizza.getId(),
+                dto.getQuantity()
+        );
     }
 
     @Override
@@ -132,6 +145,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
+        OrderStatus previousStatus = order.getStatus();
+
         switch (order.getStatus()) {
             case PENDING -> order.setStatus(OrderStatus.PREPARING);
 
@@ -154,11 +169,24 @@ public class OrderServiceImpl implements OrderService {
             }
 
             case DELIVERED, CANCELLED -> {
+                LOGGER.warn(
+                        "Ignored order status change: orderId={}, currentStatus={}",
+                        orderId,
+                        order.getStatus()
+                );
+
                 return;
             }
         }
 
         orderRepository.save(order);
+
+        LOGGER.info(
+                "Order status changed: orderId={}, previousStatus={}, newStatus={}",
+                order.getId(),
+                previousStatus,
+                order.getStatus()
+        );
     }
 
     @Override
@@ -169,6 +197,13 @@ public class OrderServiceImpl implements OrderService {
 
         if (order.getStatus() != OrderStatus.PENDING
                 && order.getStatus() != OrderStatus.PREPARING) {
+
+            LOGGER.warn(
+                    "Rejected order cancellation: orderId={}, status={}",
+                    orderId,
+                    order.getStatus()
+            );
+
             return;
         }
 
@@ -178,5 +213,10 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
+
+        LOGGER.info(
+                "Order cancelled successfully: orderId={}",
+                orderId
+        );
     }
 }

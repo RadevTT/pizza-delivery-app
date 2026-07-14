@@ -6,6 +6,8 @@ import bg.softuni.pizza_delivery_application.model.dto.PizzaEditDTO;
 import bg.softuni.pizza_delivery_application.model.entity.Pizza;
 import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.service.PizzaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.UUID;
 
 @Service
 public class PizzaServiceImpl implements PizzaService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PizzaServiceImpl.class);
 
     private final PizzaRepository pizzaRepository;
 
@@ -31,6 +36,13 @@ public class PizzaServiceImpl implements PizzaService {
         pizza.setImageUrl(dto.getImageUrl());
 
         pizzaRepository.save(pizza);
+
+        LOGGER.info(
+                "Pizza added successfully: pizzaId={}, name={}, price={}",
+                pizza.getId(),
+                pizza.getName(),
+                pizza.getPrice()
+        );
     }
 
     @Override
@@ -46,11 +58,22 @@ public class PizzaServiceImpl implements PizzaService {
 
     @Override
     public void deletePizza(UUID id) {
-        pizzaRepository.deleteById(id);
+
+        Pizza pizza = pizzaRepository.findById(id)
+                .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
+
+        pizzaRepository.delete(pizza);
+
+        LOGGER.info(
+                "Pizza deleted successfully: pizzaId={}, name={}",
+                pizza.getId(),
+                pizza.getName()
+        );
     }
 
     @Override
     public PizzaEditDTO getPizzaForEdit(UUID id) {
+
         Pizza pizza = pizzaRepository.findById(id)
                 .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
 
@@ -64,6 +87,7 @@ public class PizzaServiceImpl implements PizzaService {
 
     @Override
     public void editPizza(PizzaEditDTO dto) {
+
         Pizza pizza = pizzaRepository.findById(dto.getId())
                 .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
 
@@ -73,5 +97,12 @@ public class PizzaServiceImpl implements PizzaService {
         pizza.setImageUrl(dto.getImageUrl());
 
         pizzaRepository.save(pizza);
+
+        LOGGER.info(
+                "Pizza updated successfully: pizzaId={}, name={}, price={}",
+                pizza.getId(),
+                pizza.getName(),
+                pizza.getPrice()
+        );
     }
 }

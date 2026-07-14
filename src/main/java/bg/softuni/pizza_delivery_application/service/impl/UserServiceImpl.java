@@ -1,7 +1,7 @@
 package bg.softuni.pizza_delivery_application.service.impl;
 
-import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.RoleNotFoundException;
+import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UsernameAlreadyExistsException;
 import bg.softuni.pizza_delivery_application.model.dto.AdminUserDTO;
 import bg.softuni.pizza_delivery_application.model.dto.ProfileEditDTO;
@@ -12,6 +12,8 @@ import bg.softuni.pizza_delivery_application.model.enums.RoleName;
 import bg.softuni.pizza_delivery_application.repository.RoleRepository;
 import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,9 @@ import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -53,6 +58,12 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(userRole);
 
         userRepository.save(user);
+
+        LOGGER.info(
+                "User registered successfully: userId={}, username={}",
+                user.getId(),
+                user.getUsername()
+        );
     }
 
     @Override
@@ -97,6 +108,12 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.saveAndFlush(user);
+
+        LOGGER.info(
+                "User profile updated: userId={}, username={}",
+                user.getId(),
+                user.getUsername()
+        );
     }
 
     @Override
@@ -119,6 +136,12 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(adminRole);
 
         userRepository.save(user);
+
+        LOGGER.info(
+                "Administrator role added: userId={}, username={}",
+                user.getId(),
+                user.getUsername()
+        );
     }
 
     @Override
@@ -128,6 +151,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (user.getUsername().equals(currentUsername)) {
+
+            LOGGER.warn(
+                    "Rejected self admin-role removal: username={}",
+                    currentUsername
+            );
+
             throw new IllegalArgumentException(
                     "You cannot remove your own administrator role."
             );
@@ -139,6 +168,12 @@ public class UserServiceImpl implements UserService {
         user.getRoles().remove(adminRole);
 
         userRepository.save(user);
+
+        LOGGER.info(
+                "Administrator role removed: userId={}, username={}",
+                user.getId(),
+                user.getUsername()
+        );
     }
 
     private AdminUserDTO mapToAdminUserDTO(User user) {
