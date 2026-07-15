@@ -219,4 +219,74 @@ public class OrderServiceImpl implements OrderService {
                 orderId
         );
     }
+
+    @Override
+    public void cancelExpiredPendingOrders() {
+
+        LocalDateTime expirationTime = LocalDateTime.now().minusHours(24);
+
+        List<Order> expiredOrders =
+                orderRepository.findAllByStatusAndCreatedOnBefore(
+                        OrderStatus.PENDING,
+                        expirationTime
+                );
+
+        int successfullyCancelled = 0;
+
+        for (Order order : expiredOrders) {
+            try {
+                cancelOrder(order.getId());
+                successfullyCancelled++;
+            } catch (RuntimeException ex) {
+                LOGGER.error(
+                        "Failed to cancel expired order: orderId={}, reason={}",
+                        order.getId(),
+                        ex.getMessage()
+                );
+            }
+        }
+
+        if (!expiredOrders.isEmpty()) {
+            LOGGER.info(
+                    "Expired pending orders processed: found={}, cancelled={}",
+                    expiredOrders.size(),
+                    successfullyCancelled
+            );
+        }
+    }
+
+    @Override
+    public void dispatchDelayedPreparingOrders() {
+
+        LocalDateTime delayLimit = LocalDateTime.now().minusHours(2);
+
+        List<Order> delayedOrders =
+                orderRepository.findAllByStatusAndCreatedOnBefore(
+                        OrderStatus.PREPARING,
+                        delayLimit
+                );
+
+        int successfullyDispatched = 0;
+
+        for (Order order : delayedOrders) {
+            try {
+                changeStatus(order.getId());
+                successfullyDispatched++;
+            } catch (RuntimeException ex) {
+                LOGGER.error(
+                        "Failed to dispatch delayed order: orderId={}, reason={}",
+                        order.getId(),
+                        ex.getMessage()
+                );
+            }
+        }
+
+        if (!delayedOrders.isEmpty()) {
+            LOGGER.info(
+                    "Delayed preparing orders processed: found={}, dispatched={}",
+                    delayedOrders.size(),
+                    successfullyDispatched
+            );
+        }
+    }
 }

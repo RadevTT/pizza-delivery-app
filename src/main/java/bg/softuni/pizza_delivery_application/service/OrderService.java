@@ -20,4 +20,8 @@ public interface OrderService {
     void changeStatus(UUID orderId);
 
     void cancelOrder(UUID orderId);
+
+    void cancelExpiredPendingOrders();
+
+    void dispatchDelayedPreparingOrders();
 }
