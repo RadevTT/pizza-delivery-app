@@ -8,6 +8,8 @@ import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.service.PizzaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class PizzaServiceImpl implements PizzaService {
     }
 
     @Override
+    @CacheEvict(value = "pizzas", allEntries = true)
     public void addPizza(PizzaAddDTO dto) {
 
         Pizza pizza = new Pizza();
@@ -46,17 +49,20 @@ public class PizzaServiceImpl implements PizzaService {
     }
 
     @Override
+    @Cacheable("pizzas")
     public List<Pizza> getAllPizzas() {
         return pizzaRepository.findAll();
     }
 
     @Override
+    @Cacheable(value = "pizzaById", key = "#id")
     public Pizza findById(UUID id) {
         return pizzaRepository.findById(id)
                 .orElseThrow(() -> new PizzaNotFoundException("Pizza not found"));
     }
 
     @Override
+    @CacheEvict(value = {"pizzas", "pizzaById"}, allEntries = true)
     public void deletePizza(UUID id) {
 
         Pizza pizza = pizzaRepository.findById(id)
@@ -86,6 +92,7 @@ public class PizzaServiceImpl implements PizzaService {
     }
 
     @Override
+    @CacheEvict(value = {"pizzas", "pizzaById"}, allEntries = true)
     public void editPizza(PizzaEditDTO dto) {
 
         Pizza pizza = pizzaRepository.findById(dto.getId())
