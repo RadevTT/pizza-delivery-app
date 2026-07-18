@@ -1,178 +1,279 @@
-# Pizza Delivery Application
+# 🍕 Pizza Delivery Application
 
 ## Overview
 
-Pizza Delivery Application is a Spring Boot web application for managing pizzas and customer orders.
+Pizza Delivery Application is a Spring Boot web application for managing pizzas, customer orders and deliveries.
 
-The application supports user registration and authentication, role-based authorization, pizza management, order creation, order tracking, and order administration.
-
----
-
-## Features
-
-### Authentication & Authorization
-
-* User registration
-* User login
-* User logout
-* Password encryption using BCrypt
-* Spring Security integration
-* Role-based access control
-* USER and ADMIN roles
-
-### Pizza Management (ADMIN)
-
-* Add pizza
-* Edit pizza
-* Delete pizza
-* Upload pizza image URL
-* Manage pizza menu
-
-### Orders
-
-* Create order
-* View personal orders
-* View order details
-* Track order status
-
-### Admin Panel
-
-* View all orders
-* View order details
-* Manage order statuses
-* Update order workflow
-
-### User Profile
-
-* View profile information
-* Display user roles
-
-### Error Handling
-
-* Username already exists validation
-* Access denied page
-* Global exception handling
+The project demonstrates a modern Spring Boot architecture including authentication, authorization, microservices communication, scheduling, caching, logging and unit testing.
 
 ---
 
-## Functionalities
+# Features
 
-The application supports the following domain functionalities:
+## Authentication & Authorization
 
-1. Create Pizza (ADMIN)
-2. Edit Pizza (ADMIN)
-3. Delete Pizza (ADMIN)
-4. Create Order (USER)
-5. Change Order Status (ADMIN)
-
----
-
-## Technologies
-
-* Java 17
-* Spring Boot 3.4.0
-* Spring Security
-* Spring Data JPA
-* Hibernate
-* Thymeleaf
-* MySQL
-* Maven
-* Bootstrap 5
+- User registration
+- User login
+- User logout
+- BCrypt password encryption
+- Spring Security integration
+- Role-based authorization
+- USER and ADMIN roles
 
 ---
 
-## Database
+## Pizza Management (ADMIN)
 
-The application uses MySQL as the primary database.
-
-All entities use UUID as primary keys.
-
-### Entity Relationships
-
-* User ↔ Role
-* User ↔ Order
-* Order ↔ OrderItem
-* OrderItem ↔ Pizza
-
-Passwords are stored hashed using BCrypt.
+- Add pizza
+- Edit pizza
+- Delete pizza
+- View pizza menu
+- Pizza image support
+- Cached pizza catalog using Spring Cache
 
 ---
 
-## Security
+## Orders
 
-### Guest
+- Create order
+- View personal orders
+- View order details
+- Automatic total price calculation
+- Track order status
 
-* Register
-* Login
+Order workflow:
 
-### USER
+- PENDING
+- PREPARING
+- OUT_FOR_DELIVERY
+- DELIVERED
+- CANCELLED
 
-* View pizzas
-* Create orders
-* View personal orders
-* View order details
-* View profile
+---
 
-### ADMIN
+## Delivery Microservice
 
-* All USER permissions
-* Add pizzas
-* Edit pizzas
-* Delete pizzas
-* View all orders
-* View order details
-* Change order statuses
+The application communicates with a separate Delivery Service using Spring Cloud OpenFeign.
 
-Role restrictions are enforced through Spring Security.
+Features:
+
+- Create delivery automatically after order creation
+- Synchronize delivery status with order status
+- Dispatch delivery
+- Complete delivery
+- Cancel delivery
+
+---
+
+## Scheduled Tasks
+
+Automatic background processing using Spring Scheduler.
+
+Implemented jobs:
+
+- Automatically cancel expired pending orders
+- Automatically dispatch delayed preparing orders
+
+---
+
+## User Profile
+
+- View profile
+- Edit email
+- Change password
+- Display assigned roles
+
+---
+
+## Administration
+
+Administrators can:
+
+- View all orders
+- View order details
+- Change order status
+- Cancel orders
+- Manage administrator roles
+- Manage registered users
+- Manage pizzas
+
+---
+
+## Error Handling
+
+Custom exceptions:
+
+- UsernameAlreadyExistsException
+- UserNotFoundException
+- PizzaNotFoundException
+- OrderNotFoundException
+- RoleNotFoundException
+- DeliveryServiceUnavailableException
+
+Global exception handling is implemented using Spring MVC.
+
+---
+
+## Logging
+
+The project uses SLF4J logging.
+
+Important events are logged:
+
+- User registration
+- Profile updates
+- Pizza management
+- Order creation
+- Order cancellation
+- Order status changes
+- Delivery status changes
+
+---
+
+## Caching
+
+Spring Cache is used for:
+
+- Pizza list
+- Pizza lookup by ID
+
+The cache is automatically invalidated after adding, editing or deleting pizzas.
+
+---
+
+## Resilience
+
+Spring Cloud Circuit Breaker (Resilience4j)
+
+Implemented fallback support for the Delivery Service.
+
+If the Delivery Service is unavailable, the application fails gracefully without crashing.
+
+---
+
+# Technologies
+
+- Java 17
+- Spring Boot 3.4.0
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- Spring Cache
+- Spring Scheduler
+- Spring Cloud OpenFeign
+- Spring Cloud Circuit Breaker (Resilience4j)
+- Thymeleaf
+- MySQL
+- Maven
+- Bootstrap 5
+- JUnit 5
+- Mockito
+
+---
+
+# Database
+
+The application uses MySQL.
+
+All entities use UUID primary keys.
+
+Entity relationships:
+
+- User ↔ Role
+- User ↔ Order
+- Order ↔ OrderItem
+- OrderItem ↔ Pizza
+
+Passwords are stored using BCrypt hashing.
+
+---
+
+# Security
+
+## Guest
+
+- Register
+- Login
+
+## USER
+
+- Browse pizzas
+- Create orders
+- View personal orders
+- View order details
+- View and edit profile
+
+## ADMIN
+
+All USER permissions plus:
+
+- Add pizzas
+- Edit pizzas
+- Delete pizzas
+- View all orders
+- Change order status
+- Cancel orders
+- Manage users
+- Grant administrator role
+- Remove administrator role
+
+Access restrictions are enforced by Spring Security.
 
 Unauthorized users are redirected to a custom Access Denied page.
 
 ---
 
-## Order Workflow
+# Testing
 
-Orders can move through the following statuses:
+The project includes unit tests for the service layer using:
 
-* PENDING
-* PREPARING
-* DELIVERED
+- JUnit 5
+- Mockito
 
-Only administrators can manage order statuses.
+Covered services:
+
+- PizzaService
+- UserService
+- OrderService
 
 ---
 
-## Project Structure
+# Project Structure
 
-```text
+```
 src
+├── config
 ├── controller
 ├── service
 ├── service.impl
+├── scheduler
+├── client
+├── client.fallback
 ├── repository
 ├── model
-│   ├── entity
 │   ├── dto
+│   ├── entity
 │   └── enums
-├── config
 ├── exception
-└── templates
+├── templates
+└── test
 ```
 
 ---
 
-## Setup
+# Setup
 
-### 1. Create Database
+## 1. Create database
 
 ```sql
 CREATE DATABASE pizza_delivery;
 ```
 
-### 2. Configure Database Credentials
+## 2. Configure database
 
 Edit:
 
-```text
+```
 src/main/resources/application.properties
 ```
 
@@ -184,79 +285,58 @@ spring.datasource.username=root
 spring.datasource.password=your_password
 ```
 
-### 3. Run Application
+## 3. Start Delivery Service
 
-Using IntelliJ IDEA:
+Run:
 
-* Open project
-* Load Maven dependencies
-* Run PizzaDeliveryApplication
+```
+delivery-service
+```
 
-Or use Maven Wrapper:
+Default port:
 
-```bash
-./mvnw spring-boot:run
+```
+8081
+```
+
+## 4. Start Main Application
+
+Run:
+
+```
+PizzaDeliveryApplication
+```
+
+Default port:
+
+```
+8080
 ```
 
 ---
 
-## Default Roles
+# Default Roles
 
-The application automatically initializes:
+The application initializes automatically:
 
-* USER
-* ADMIN
-
-during startup.
+- USER
+- ADMIN
 
 ---
 
-## Administrator Access
+# Administrator Access
 
-The application automatically creates the USER and ADMIN roles.
-
-To test administrator functionality:
-
-1. Register a user account.
-2. Assign the ADMIN role to the user in the database.
+1. Register a user.
+2. Grant the ADMIN role.
 3. Log in again.
-4. The Admin Panel will become available from the dashboard.
+4. The Administration panel becomes available.
 
 ---
 
-## Validation
+# Author
 
-The application uses Jakarta Validation for form validation.
+**Teodor Radev**
 
-Examples:
+Spring Advanced Individual Project
 
-* Required fields validation
-* Username length validation
-* Unique username validation
-* Unique email validation
-* Password strength validation
-* Password confirmation validation
-* Pizza name validation
-* Price validation
-* Quantity validation
-
----
-
-## Error Handling
-
-The application includes:
-
-* UsernameAlreadyExistsException
-* GlobalExceptionHandler
-* Custom Access Denied page
-* Validation error handling
-
----
-
-## Author
-
-Teodor Radev
-
-Spring Fundamentals Individual Project
-
-SoftUni – May 2026
+SoftUni – June 2026
