@@ -8,12 +8,14 @@ import bg.softuni.delivery_service.model.entity.Delivery;
 import bg.softuni.delivery_service.model.enums.DeliveryStatus;
 import bg.softuni.delivery_service.repository.DeliveryRepository;
 import bg.softuni.delivery_service.service.DeliveryService;
+import bg.softuni.delivery_service.exception.InvalidDeliveryStatusTransitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 
 @Service
 public class DeliveryServiceImpl implements DeliveryService {
@@ -76,6 +78,10 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
 
+        if (delivery.getStatus() != DeliveryStatus.CREATED) {
+            throw new InvalidDeliveryStatusTransitionException();
+        }
+
         DeliveryStatus previousStatus = delivery.getStatus();
 
         delivery.setStatus(DeliveryStatus.ON_THE_WAY);
@@ -93,13 +99,16 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         return map(delivery);
     }
-
     @Override
     public DeliveryResponseDTO completeDelivery(UUID id) {
 
         Delivery delivery = deliveryRepository
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
+
+        if (delivery.getStatus() != DeliveryStatus.ON_THE_WAY) {
+            throw new InvalidDeliveryStatusTransitionException();
+        }
 
         DeliveryStatus previousStatus = delivery.getStatus();
 
@@ -125,6 +134,10 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = deliveryRepository
                 .findById(id)
                 .orElseThrow(DeliveryNotFoundException::new);
+
+        if (delivery.getStatus() != DeliveryStatus.CREATED) {
+            throw new InvalidDeliveryStatusTransitionException();
+        }
 
         DeliveryStatus previousStatus = delivery.getStatus();
 
