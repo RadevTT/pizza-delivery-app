@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
@@ -12,12 +14,18 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @NotNull(message = "Order is required")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @NotNull(message = "Pizza is required")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "pizza_id", nullable = false)
     private Pizza pizza;
 
+    @NotNull(message = "Quantity is required")
+    @Min(value = 1, message = "Quantity must be at least 1")
     @Column(nullable = false)
     private Integer quantity;
 

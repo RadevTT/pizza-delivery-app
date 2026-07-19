@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -14,14 +16,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotNull(message = "Order status is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
+    @NotNull(message = "Order creation date is required")
     @Column(nullable = false)
     private LocalDateTime createdOn;
 
-    @ManyToOne
+    @NotNull(message = "Order user is required")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Order() {
