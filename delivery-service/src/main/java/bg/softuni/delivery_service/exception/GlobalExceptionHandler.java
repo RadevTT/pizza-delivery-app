@@ -46,6 +46,22 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(InvalidDeliveryStatusTransitionException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidDeliveryStatusTransition(
+            InvalidDeliveryStatusTransitionException exception) {
+
+        ErrorResponseDTO response = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationErrors(
             MethodArgumentNotValidException exception) {

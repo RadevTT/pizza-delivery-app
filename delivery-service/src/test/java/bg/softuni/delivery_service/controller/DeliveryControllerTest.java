@@ -2,6 +2,7 @@ package bg.softuni.delivery_service.controller;
 
 import bg.softuni.delivery_service.exception.DeliveryAlreadyExistsException;
 import bg.softuni.delivery_service.exception.DeliveryNotFoundException;
+import bg.softuni.delivery_service.exception.InvalidDeliveryStatusTransitionException;
 import bg.softuni.delivery_service.model.dto.DeliveryCreateDTO;
 import bg.softuni.delivery_service.model.dto.DeliveryResponseDTO;
 import bg.softuni.delivery_service.model.enums.DeliveryStatus;
@@ -195,6 +196,23 @@ class DeliveryControllerTest {
                         .value("ON_THE_WAY"))
                 .andExpect(jsonPath("$.dispatchedOn")
                         .exists());
+
+        verify(deliveryService).dispatchDelivery(deliveryId);
+    }
+
+    @Test
+    void dispatchDelivery_WhenStatusTransitionIsInvalid_ShouldReturnConflict()
+            throws Exception {
+
+        when(deliveryService.dispatchDelivery(deliveryId))
+                .thenThrow(new InvalidDeliveryStatusTransitionException());
+
+        mockMvc.perform(
+                        put("/api/deliveries/{id}/dispatch", deliveryId)
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").exists());
 
         verify(deliveryService).dispatchDelivery(deliveryId);
     }
