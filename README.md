@@ -1,10 +1,21 @@
 # 🍕 Pizza Delivery Application
 
-## Overview
+A full-stack Spring Boot web application for managing pizzas, customer orders and deliveries.
 
-Pizza Delivery Application is a Spring Boot web application for managing pizzas, customer orders and deliveries.
+The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, scheduling, caching, logging and automated testing.
 
-The project demonstrates a modern Spring Boot architecture including authentication, authorization, microservices communication, scheduling, caching, logging and unit testing.
+---
+
+# Architecture
+
+The system consists of two Spring Boot applications:
+
+- **Pizza Delivery Application** – the main web application
+- **Delivery Service** – a separate microservice responsible for delivery management
+
+The applications communicate through **Spring Cloud OpenFeign**.
+
+To improve reliability, the project uses **Resilience4j Circuit Breaker** with fallback support when the Delivery Service is unavailable.
 
 ---
 
@@ -27,7 +38,7 @@ The project demonstrates a modern Spring Boot architecture including authenticat
 - Add pizza
 - Edit pizza
 - Delete pizza
-- View pizza menu
+- Browse pizza menu
 - Pizza image support
 - Cached pizza catalog using Spring Cache
 
@@ -41,7 +52,7 @@ The project demonstrates a modern Spring Boot architecture including authenticat
 - Automatic total price calculation
 - Track order status
 
-Order workflow:
+### Order workflow
 
 - PENDING
 - PREPARING
@@ -55,13 +66,13 @@ Order workflow:
 
 The application communicates with a separate Delivery Service using Spring Cloud OpenFeign.
 
-Features:
+Implemented functionality:
 
-- Create delivery automatically after order creation
+- Automatically create delivery after order creation
 - Synchronize delivery status with order status
-- Dispatch delivery
-- Complete delivery
-- Cancel delivery
+- Dispatch deliveries
+- Complete deliveries
+- Cancel deliveries
 
 ---
 
@@ -71,8 +82,8 @@ Automatic background processing using Spring Scheduler.
 
 Implemented jobs:
 
-- Automatically cancel expired pending orders
-- Automatically dispatch delayed preparing orders
+- Cancel expired pending orders
+- Dispatch delayed preparing orders
 
 ---
 
@@ -93,9 +104,10 @@ Administrators can:
 - View order details
 - Change order status
 - Cancel orders
-- Manage administrator roles
-- Manage registered users
 - Manage pizzas
+- Manage users
+- Grant ADMIN role
+- Remove ADMIN role
 
 ---
 
@@ -116,9 +128,9 @@ Global exception handling is implemented using Spring MVC.
 
 ## Logging
 
-The project uses SLF4J logging.
+The project uses **SLF4J** logging.
 
-Important events are logged:
+Logged events include:
 
 - User registration
 - Profile updates
@@ -143,11 +155,11 @@ The cache is automatically invalidated after adding, editing or deleting pizzas.
 
 ## Resilience
 
-Spring Cloud Circuit Breaker (Resilience4j)
+The project uses **Spring Cloud Circuit Breaker (Resilience4j)**.
 
-Implemented fallback support for the Delivery Service.
+Fallback support is implemented for Delivery Service communication.
 
-If the Delivery Service is unavailable, the application fails gracefully without crashing.
+If the Delivery Service becomes unavailable, the application continues working gracefully.
 
 ---
 
@@ -168,12 +180,15 @@ If the Delivery Service is unavailable, the application fails gracefully without
 - Bootstrap 5
 - JUnit 5
 - Mockito
+- Spring Boot Test
+- MockMvc
+- JaCoCo
 
 ---
 
 # Database
 
-The application uses MySQL.
+The application uses **MySQL**.
 
 All entities use UUID primary keys.
 
@@ -217,24 +232,34 @@ All USER permissions plus:
 - Grant administrator role
 - Remove administrator role
 
-Access restrictions are enforced by Spring Security.
+Access restrictions are enforced using Spring Security.
 
-Unauthorized users are redirected to a custom Access Denied page.
+Unauthorized users are redirected to a custom **Access Denied** page.
 
 ---
 
 # Testing
 
-The project includes unit tests for the service layer using:
+The project includes automated unit and controller tests built with:
 
 - JUnit 5
 - Mockito
+- Spring Boot Test
+- MockMvc
+- JaCoCo
 
-Covered services:
+Covered components:
 
 - PizzaService
 - UserService
 - OrderService
+- OrderController
+
+Project statistics:
+
+- ✅ 43 automated tests
+- ✅ JaCoCo code coverage report
+- ✅ ~68% instruction coverage
 
 ---
 
@@ -248,6 +273,7 @@ src
 ├── service.impl
 ├── scheduler
 ├── client
+├── client.dto
 ├── client.fallback
 ├── repository
 ├── model
@@ -269,7 +295,7 @@ src
 CREATE DATABASE pizza_delivery;
 ```
 
-## 2. Configure database
+## 2. Configure the database
 
 Edit:
 
@@ -285,7 +311,7 @@ spring.datasource.username=root
 spring.datasource.password=your_password
 ```
 
-## 3. Start Delivery Service
+## 3. Start the Delivery Service
 
 Run:
 
@@ -299,7 +325,7 @@ Default port:
 8081
 ```
 
-## 4. Start Main Application
+## 4. Start the Main Application
 
 Run:
 
@@ -313,23 +339,23 @@ Default port:
 8080
 ```
 
----
+## 5. Run Tests
 
-# Default Roles
+```bash
+./mvnw test
+```
 
-The application initializes automatically:
+Generate the JaCoCo report:
 
-- USER
-- ADMIN
+```bash
+./mvnw verify
+```
 
----
+The coverage report will be generated in:
 
-# Administrator Access
-
-1. Register a user.
-2. Grant the ADMIN role.
-3. Log in again.
-4. The Administration panel becomes available.
+```
+target/site/jacoco/index.html
+```
 
 ---
 
@@ -340,3 +366,9 @@ The application initializes automatically:
 Spring Advanced Individual Project
 
 SoftUni – June 2026
+
+---
+
+# License
+
+This project was developed for educational purposes as part of the SoftUni Spring Advanced course.
