@@ -2,7 +2,7 @@
 
 A full-stack Spring Boot web application for managing pizzas, customer orders and deliveries.
 
-The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, scheduling, caching, logging and automated testing.
+The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, scheduling, caching, logging, resilience patterns and automated testing.
 
 ---
 
@@ -13,9 +13,9 @@ The system consists of two Spring Boot applications:
 - **Pizza Delivery Application** – the main web application
 - **Delivery Service** – a separate microservice responsible for delivery management
 
-The applications communicate through **Spring Cloud OpenFeign**.
+The applications communicate through REST APIs using **Spring Cloud OpenFeign**.
 
-To improve reliability, the project uses **Resilience4j Circuit Breaker** with fallback support when the Delivery Service is unavailable.
+To improve reliability, the project uses **Spring Cloud Circuit Breaker (Resilience4j)** with fallback support when the Delivery Service is unavailable.
 
 ---
 
@@ -190,7 +190,7 @@ If the Delivery Service becomes unavailable, the application continues working g
 
 The application uses **MySQL**.
 
-All entities use UUID primary keys.
+Domain entities use UUID identifiers.
 
 Entity relationships:
 
@@ -250,57 +250,80 @@ The project includes automated unit and controller tests built with:
 
 Covered components:
 
+### Main Application
+
 - PizzaService
 - UserService
 - OrderService
 - OrderController
+- PizzaController
+- ProfileController
+
+### Delivery Service
+
+- DeliveryService
+- DeliveryController
+- Delivery integration tests
 
 Project statistics:
 
-- ✅ 43 automated tests
-- ✅ JaCoCo code coverage report
-- ✅ ~68% instruction coverage
+- ✅ 54 automated tests
+- ✅ JaCoCo code coverage reports
+- ✅ ~74% line coverage (main application)
+- ✅ ~99% line coverage (delivery-service)
 
 ---
 
 # Project Structure
 
-```
-src
-├── config
-├── controller
-├── service
-├── service.impl
-├── scheduler
-├── client
-├── client.dto
-├── client.fallback
-├── repository
-├── model
-│   ├── dto
-│   ├── entity
-│   └── enums
-├── exception
-├── templates
-└── test
+```text
+pizza-delivery-application
+├── src
+│   ├── config
+│   ├── controller
+│   ├── service
+│   ├── service.impl
+│   ├── scheduler
+│   ├── client
+│   ├── client.dto
+│   ├── client.fallback
+│   ├── repository
+│   ├── model
+│   │   ├── dto
+│   │   ├── entity
+│   │   └── enums
+│   ├── exception
+│   ├── templates
+│   └── test
+│
+└── delivery-service
+    ├── controller
+    ├── service
+    ├── repository
+    ├── model
+    ├── exception
+    └── test
 ```
 
 ---
 
 # Setup
 
-## 1. Create database
+## 1. Create databases
 
 ```sql
 CREATE DATABASE pizza_delivery;
+CREATE DATABASE pizza_delivery_service;
 ```
 
-## 2. Configure the database
+## 2. Configure the databases
 
 Edit:
 
-```
+```text
 src/main/resources/application.properties
+
+delivery-service/src/main/resources/application.properties
 ```
 
 Example:
@@ -311,33 +334,41 @@ spring.datasource.username=root
 spring.datasource.password=your_password
 ```
 
+Configure the Delivery Service in the same way.
+
+---
+
 ## 3. Start the Delivery Service
 
 Run:
 
-```
-delivery-service
+```text
+DeliveryServiceApplication
 ```
 
 Default port:
 
-```
+```text
 8081
 ```
+
+---
 
 ## 4. Start the Main Application
 
 Run:
 
-```
+```text
 PizzaDeliveryApplication
 ```
 
 Default port:
 
-```
+```text
 8080
 ```
+
+---
 
 ## 5. Run Tests
 
@@ -345,16 +376,18 @@ Default port:
 ./mvnw test
 ```
 
-Generate the JaCoCo report:
+Generate the JaCoCo reports:
 
 ```bash
 ./mvnw verify
 ```
 
-The coverage report will be generated in:
+Reports are generated in:
 
-```
+```text
 target/site/jacoco/index.html
+
+delivery-service/target/site/jacoco/index.html
 ```
 
 ---
