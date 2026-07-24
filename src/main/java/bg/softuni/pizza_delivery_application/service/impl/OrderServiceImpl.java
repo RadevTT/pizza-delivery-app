@@ -18,6 +18,8 @@ import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.OrderItemService;
 import bg.softuni.pizza_delivery_application.service.OrderService;
+import bg.softuni.pizza_delivery_application.event.OrderCreatedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,17 +42,21 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final DeliveryClient deliveryClient;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     public OrderServiceImpl(OrderRepository orderRepository,
                             OrderItemService orderItemService,
                             PizzaRepository pizzaRepository,
                             UserRepository userRepository,
-                            DeliveryClient deliveryClient) {
+                            DeliveryClient deliveryClient,
+                            ApplicationEventPublisher eventPublisher) {
 
         this.orderRepository = orderRepository;
         this.orderItemService = orderItemService;
         this.pizzaRepository = pizzaRepository;
         this.userRepository = userRepository;
         this.deliveryClient = deliveryClient;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -84,6 +90,10 @@ public class OrderServiceImpl implements OrderService {
         );
 
         deliveryClient.createDelivery(deliveryRequest);
+
+        eventPublisher.publishEvent(
+                new OrderCreatedEvent(savedOrder)
+        );
 
         LOGGER.info(
                 "Order created successfully: orderId={}, username={}, pizzaId={}, quantity={}",

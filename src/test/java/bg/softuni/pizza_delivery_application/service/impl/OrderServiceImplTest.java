@@ -3,6 +3,7 @@ package bg.softuni.pizza_delivery_application.service.impl;
 import bg.softuni.pizza_delivery_application.client.DeliveryClient;
 import bg.softuni.pizza_delivery_application.client.dto.DeliveryCreateRequest;
 import bg.softuni.pizza_delivery_application.client.dto.DeliveryResponse;
+import bg.softuni.pizza_delivery_application.event.OrderCreatedEvent;
 import bg.softuni.pizza_delivery_application.exception.PizzaNotFoundException;
 import bg.softuni.pizza_delivery_application.exception.UserNotFoundException;
 import bg.softuni.pizza_delivery_application.model.dto.OrderCreateDTO;
@@ -16,6 +17,7 @@ import bg.softuni.pizza_delivery_application.repository.OrderRepository;
 import bg.softuni.pizza_delivery_application.repository.PizzaRepository;
 import bg.softuni.pizza_delivery_application.repository.UserRepository;
 import bg.softuni.pizza_delivery_application.service.OrderItemService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +53,8 @@ class OrderServiceImplTest {
 
     @Mock
     private DeliveryClient deliveryClient;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     private OrderServiceImpl orderService;
 
@@ -70,7 +74,8 @@ class OrderServiceImplTest {
                 orderItemService,
                 pizzaRepository,
                 userRepository,
-                deliveryClient
+                deliveryClient,
+                eventPublisher
         );
 
         orderId = UUID.randomUUID();
@@ -144,8 +149,10 @@ class OrderServiceImplTest {
         assertEquals(orderId, request.getOrderId());
         assertEquals("Sofia Center 10", request.getAddress());
         assertEquals("+359888123456", request.getPhoneNumber());
-    }
 
+        verify(eventPublisher)
+                .publishEvent(any(OrderCreatedEvent.class));
+    }
     @Test
     void createOrder_WhenUserMissing_ShouldThrowException() {
 
