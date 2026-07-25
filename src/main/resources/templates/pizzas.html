@@ -64,10 +64,19 @@
 
 <div class="container mt-5">
 
-    <h1 class="text-center mb-4 page-title">
-        Our Pizzas
-    </h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
+        <h1 class="page-title mb-0">
+            Our Pizzas
+        </h1>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/pizzas/export/pdf}"
+           class="btn btn-danger">
+            📄 Export PDF
+        </a>
+
+    </div>
     <div class="row">
 
         <div class="col-md-4 mb-4"
