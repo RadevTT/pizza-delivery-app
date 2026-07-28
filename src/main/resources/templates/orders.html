@@ -19,10 +19,15 @@
 
     <div>
       <a class="btn btn-outline-light me-2" th:href="@{/pizzas}">Pizzas</a>
-      <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-outline-light btn-sm">
+      <form th:action="@{/logout}"
+            method="post"
+            class="d-inline">
+
+        <button type="submit"
+                class="btn btn-outline-light">
           Logout
         </button>
+
       </form>
     </div>
   </div>
