@@ -1,8 +1,8 @@
 # 🍕 Pizza Delivery Application
 
-A full-stack Spring Boot web application for managing pizzas, customer orders and deliveries.
+A full-stack Spring Boot web application for managing pizzas, customer orders and deliveries with a dedicated Delivery microservice.
 
-The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, scheduling, caching, logging, resilience patterns and automated testing.
+The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, Spring Events, AOP logging, scheduling, caching, resilience patterns, PDF export and automated testing.
 
 ---
 
@@ -41,6 +41,7 @@ To improve reliability, the project uses **Spring Cloud Circuit Breaker (Resilie
 - Browse pizza menu
 - Pizza image support
 - Cached pizza catalog using Spring Cache
+- Export pizza menu as PDF
 
 ---
 
@@ -73,6 +74,17 @@ Implemented functionality:
 - Dispatch deliveries
 - Complete deliveries
 - Cancel deliveries
+
+---
+
+## Spring Events
+
+The application uses Spring Events to decouple business logic.
+
+Implemented event:
+
+- OrderCreatedEvent
+- OrderCreatedEventListener
 
 ---
 
@@ -111,6 +123,18 @@ Administrators can:
 
 ---
 
+## PDF Export
+
+Administrators can export the complete pizza menu as a PDF document.
+
+The generated report contains:
+
+- Pizza name
+- Description
+- Price
+
+---
+
 ## Error Handling
 
 Custom exceptions:
@@ -128,7 +152,7 @@ Global exception handling is implemented using Spring MVC.
 
 ## Logging
 
-The project uses **SLF4J** logging.
+The project uses **SLF4J** together with **Spring AOP**.
 
 Logged events include:
 
@@ -139,6 +163,8 @@ Logged events include:
 - Order cancellation
 - Order status changes
 - Delivery status changes
+
+Additionally, every service method execution is automatically logged through a custom AOP aspect, including execution time and exceptions.
 
 ---
 
@@ -172,10 +198,13 @@ If the Delivery Service becomes unavailable, the application continues working g
 - Hibernate
 - Spring Cache
 - Spring Scheduler
+- Spring Events
+- Spring AOP
 - Spring Cloud OpenFeign
 - Spring Cloud Circuit Breaker (Resilience4j)
 - Thymeleaf
 - MySQL
+- OpenPDF
 - Maven
 - Bootstrap 5
 - JUnit 5
@@ -225,6 +254,7 @@ All USER permissions plus:
 - Add pizzas
 - Edit pizzas
 - Delete pizzas
+- Export pizza menu as PDF
 - View all orders
 - Change order status
 - Cancel orders
@@ -258,6 +288,10 @@ Covered components:
 - OrderController
 - PizzaController
 - ProfileController
+- PdfController
+- PdfExportService
+- LoggingAspect
+- OrderCreatedEvent
 
 ### Delivery Service
 
@@ -269,39 +303,42 @@ Project statistics:
 
 - ✅ 54 automated tests
 - ✅ JaCoCo code coverage reports
-- ✅ ~74% line coverage (main application)
-- ✅ ~99% line coverage (delivery-service)
+- ✅ 77% line coverage (main application)
+- ✅ 98% line coverage (delivery-service)
 
 ---
-
 # Project Structure
 
 ```text
 pizza-delivery-application
 ├── src
-│   ├── config
-│   ├── controller
-│   ├── service
-│   ├── service.impl
-│   ├── scheduler
+│   ├── aspect
 │   ├── client
 │   ├── client.dto
 │   ├── client.fallback
-│   ├── repository
+│   ├── config
+│   ├── controller
+│   ├── event
+│   ├── exception
+│   ├── init
 │   ├── model
 │   │   ├── dto
 │   │   ├── entity
 │   │   └── enums
-│   ├── exception
+│   ├── repository
+│   ├── scheduler
+│   ├── service
+│   ├── service.impl
 │   ├── templates
 │   └── test
 │
 └── delivery-service
     ├── controller
-    ├── service
-    ├── repository
-    ├── model
     ├── exception
+    ├── model
+    ├── repository
+    ├── service
+    ├── service.impl
     └── test
 ```
 
@@ -315,6 +352,8 @@ pizza-delivery-application
 CREATE DATABASE pizza_delivery;
 CREATE DATABASE pizza_delivery_service;
 ```
+
+---
 
 ## 2. Configure the databases
 
@@ -370,13 +409,33 @@ Default port:
 
 ---
 
-## 5. Run Tests
+## 5. Generate the Pizza Menu PDF
+
+Log in as an administrator.
+
+Open:
+
+```text
+/pizzas
+```
+
+Click:
+
+```text
+Export PDF
+```
+
+A PDF document containing the complete pizza menu will be generated and downloaded automatically.
+
+---
+
+## 6. Run Tests
 
 ```bash
 ./mvnw test
 ```
 
-Generate the JaCoCo reports:
+Generate JaCoCo reports:
 
 ```bash
 ./mvnw verify
