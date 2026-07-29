@@ -4,11 +4,11 @@ A full-stack Spring Boot web application for managing pizzas, customer orders an
 
 The project was developed as an individual assignment for the **SoftUni Spring Advanced** course and demonstrates a modern Spring Boot architecture using layered design, authentication, authorization, microservices, Spring Events, AOP logging, scheduling, caching, resilience patterns, PDF export and automated testing.
 
----
+------------------------------------------------------------------------
 
 # Architecture
 
-The system consists of two independent Spring Boot applications:
+The system consists of two Spring Boot applications:
 
 - **Pizza Delivery Application** – the main web application
 - **Delivery Service** – a separate microservice responsible for delivery management
@@ -19,7 +19,7 @@ The Delivery Service is completely independent and can be started or deployed se
 
 To improve reliability, the project uses **Spring Cloud Circuit Breaker (Resilience4j)** with fallback support when the Delivery Service is unavailable.
 
----
+------------------------------------------------------------------------
 
 # Features
 
@@ -51,7 +51,7 @@ To improve reliability, the project uses **Spring Cloud Circuit Breaker (Resilie
 - Automatic total price calculation
 - Track order status
 
-### Order Workflow
+### Order workflow
 
 - PENDING
 - PREPARING
@@ -108,8 +108,6 @@ The project uses **SLF4J** together with **Spring AOP** to automatically log ser
 
 Spring Cloud Circuit Breaker (Resilience4j) with fallback support for Delivery Service communication.
 
----
-
 # Technologies
 
 - Java 17
@@ -126,8 +124,8 @@ Spring Cloud Circuit Breaker (Resilience4j) with fallback support for Delivery S
 - Spring Cloud Circuit Breaker (Resilience4j)
 - Thymeleaf
 - MySQL
-- Bootstrap 5
 - OpenPDF
+- Bootstrap 5
 - Maven
 - JUnit 5
 - Mockito
@@ -135,20 +133,16 @@ Spring Cloud Circuit Breaker (Resilience4j) with fallback support for Delivery S
 - MockMvc
 - JaCoCo
 
----
-
 # Testing
 
-The project includes unit tests, controller tests, integration tests, Spring Events tests, AOP tests and PDF export tests.
+Covered components include services, controllers, PDF export, Spring Events, AOP logging and the Delivery Service.
 
-### Project Statistics
+Project statistics:
 
-- ✅ 66 automated tests (main application)
+- ✅ 66 automated tests
 - ✅ JaCoCo code coverage reports
 - ✅ 77% line coverage (main application)
 - ✅ 98% line coverage (delivery-service)
-
----
 
 # Project Structure
 
@@ -171,11 +165,9 @@ pizza-delivery-application
 └── delivery-service
 ```
 
----
-
 # Setup
 
-1. Create the databases:
+1. Create databases:
 
 ```sql
 CREATE DATABASE pizza_delivery;
@@ -184,13 +176,13 @@ CREATE DATABASE pizza_delivery_service;
 
 2. Configure `application.properties` in both applications.
 
-3. Start **DeliveryServiceApplication** (port **8081**).
+3. Start `DeliveryServiceApplication` (port **8081**).
 
-4. Start **PizzaDeliveryApplication** (port **8080**).
+4. Start `PizzaDeliveryApplication` (port **8080**).
 
 5. Log in as an administrator to manage pizzas, users and export the pizza menu as PDF.
 
-6. Run the tests:
+6. Run tests:
 
 ```bash
 ./mvnw test
@@ -204,8 +196,6 @@ target/site/jacoco/index.html
 delivery-service/target/site/jacoco/index.html
 ```
 
----
-
 # Author
 
 **Teodor Radev**
@@ -213,8 +203,6 @@ delivery-service/target/site/jacoco/index.html
 Spring Advanced Individual Project
 
 SoftUni – June 2026
-
----
 
 # License
 
