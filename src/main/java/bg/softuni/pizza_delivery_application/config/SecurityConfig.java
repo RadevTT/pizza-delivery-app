@@ -15,13 +15,20 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers(
+                                "/login",
+                                "/register",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         .requestMatchers("/pizzas/add").hasRole("ADMIN")
                         .requestMatchers("/pizzas/edit/**").hasRole("ADMIN")
                         .requestMatchers("/pizzas/delete/**").hasRole("ADMIN")
+                        .requestMatchers("/pizzas/export/pdf").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
